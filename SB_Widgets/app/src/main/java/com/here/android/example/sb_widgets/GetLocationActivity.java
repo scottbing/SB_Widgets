@@ -8,18 +8,33 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
-
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class GetLocationActivity extends AppCompatActivity {
+
+    private double lat, lon;
+
+    ViewGroup contentView;
+
+    private TextView promptView;
+    private TextView latView;
+    private TextView lonView;
+
+    private static int PROMPT_ID = View.generateViewId();
+    private static int LAT_ID = View.generateViewId();
+    private static int LON_ID = View.generateViewId();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +84,7 @@ public class GetLocationActivity extends AppCompatActivity {
 
                 AlertDialog alertDialog = new AlertDialog.Builder(GetLocationActivity.this).create();
                 alertDialog.setTitle("Alert");
-                alertDialog.setMessage("we need permission for read contact, find your location and system alert window\n\nIf you reject permission,you can not use this service\\n\\nPlease turn on permissions at [Setting]");
+                alertDialog.setMessage("Retrieval of GPS Location Coordinates requires granted permission.  Select 'Allow' Permission to get location coordinates.");
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -122,6 +137,43 @@ public class GetLocationActivity extends AppCompatActivity {
 
     private void useLocation(Location location) {
         Log.d( "MainActivity", "You are here: " + location.toString());
+
+        try {
+            lat = location.getLatitude();
+            lon = location.getLongitude();
+        } catch (NullPointerException e) {
+            lat = -1.0;
+            lon = -1.0;
+        }
+
+        // setup display of latitude and longitude to user
+        Context mContext= this;
+        LinearLayout linearLayout = new LinearLayout (mContext);
+        linearLayout.setOrientation (LinearLayout. VERTICAL);
+        linearLayout.setBackgroundColor(Color.WHITE);
+
+        int size = 20;
+        TextView promptView = new TextView(mContext);
+        promptView.setTextSize(TypedValue. COMPLEX_UNIT_SP, size);
+        promptView.setText("You are Here: ");
+        TextView latView = new TextView(mContext);
+        latView.setTextSize(TypedValue. COMPLEX_UNIT_SP, size);
+        latView.setText(String.valueOf(lat));
+        TextView lonView = new TextView(mContext);
+        lonView.setTextSize (TypedValue. COMPLEX_UNIT_SP, size);
+        lonView.setText(String.valueOf(lon));
+
+        // set ID's
+        promptView.setId(PROMPT_ID);
+        latView.setId(LAT_ID);
+        lonView.setId(LON_ID);
+
+        linearLayout.addView(promptView);
+        linearLayout.addView(latView);
+        linearLayout.addView(lonView);
+
+        contentView = (ViewGroup) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
+        contentView.addView(linearLayout);
 
         Context context = getApplicationContext();
         CharSequence text = "You moved here: " + location.toString();
