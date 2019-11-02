@@ -22,7 +22,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.List;
 
-public class GetLocationActivity extends AppCompatActivity {
+
+
+public class GetLocationActivity extends AppCompatActivity
+        implements PermissionsChecker.PermissionListener {
 
     private double lat, lon;
 
@@ -36,13 +39,25 @@ public class GetLocationActivity extends AppCompatActivity {
     private static int LAT_ID = View.generateViewId();
     private static int LON_ID = View.generateViewId();
 
+    String[] perms  = {Manifest.permission.ACCESS_FINE_LOCATION};
+
+    @Override
+    public void permissionResponse(int code) {
+        if (code == 0) {
+            enableLocation();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // check permissions first
-        checkPermissions();
+        PermissionsChecker.permissionListener = this;
+        for(int i=0; i<perms.length; i++) {
+            PermissionsChecker.checkPermissions(perms[i], i);
+        }
 
         // prime location value with the Best Last Know Location
         Location lastKnowLocation = getBestLastKnownLocation(this);
@@ -68,42 +83,6 @@ public class GetLocationActivity extends AppCompatActivity {
         }
 
         return bestLocation;
-    }
-
-    private void checkPermissions(){
-        String permission = Manifest.permission.ACCESS_FINE_LOCATION;
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission( this, permission) != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale( this, permission)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-                AlertDialog alertDialog = new AlertDialog.Builder(GetLocationActivity.this).create();
-                alertDialog.setTitle("Alert");
-                alertDialog.setMessage("Retrieval of GPS Location Coordinates requires granted permission.  Select 'Allow' Permission to get location coordinates.");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-            }  else  {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions( this, new String[]{permission}, 2);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app -defined int constant. The callback method gets the
-                // result of the request.
-            }
-        } else  {
-            // Permission has already been granted, so enblae the location
-            enableLocation();
-        }
     }
 
     private void enableLocation()  {
@@ -181,29 +160,6 @@ public class GetLocationActivity extends AppCompatActivity {
 
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case 2: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length >  0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts -related task you need to do.
-                    enableLocation();
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
-        }
     }
 }
 
