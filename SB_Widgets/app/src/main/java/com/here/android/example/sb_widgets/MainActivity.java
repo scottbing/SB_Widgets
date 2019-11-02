@@ -1,8 +1,11 @@
 package com.here.android.example.sb_widgets;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
  implements AdapterView.OnItemSelectedListener {
@@ -118,27 +122,76 @@ public class MainActivity extends AppCompatActivity
             switch (planet) {
                 case "Mercury":
                     Log.d("Planets", "Mercury");
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "You chose planet Mercury.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     break;
                 case "Venus":
                     Log.d("Planets", "Venus");
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "You chose planet Venus.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     break;
                 case "Earth":
                     Log.d("Planets", "Earth");
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "You chose planet Earth.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    processEarth();
                     break;
                 case "Mars":
                     Log.d("Planets", "Mars");
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "You chose planet Mars.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     break;
                 case "Jupiter":
                     Log.d("Planets", "Jupiter");
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "You chose planet Jupiter.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     break;
                 case "Saturn":
                     Log.d("Planets", "Saturn");
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "You chose planet Saturn.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     break;
                 case "Uranus":
                     Log.d("Planets", "Uranus");
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "You chose planet Uranus.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     break;
                 case "Neptune":
                     Log.d("Planets", "Neptune");
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "You chose planet Neptune.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     break;
                 default:
                     break;
@@ -149,5 +202,46 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         contentView.setBackgroundColor(Color.WHITE);
+    }
+
+    private void processEarth() {
+        // ask user if they would like to get their location coordinates
+        // build the guts of the dialog here
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Process Earth");
+        builder.setMessage("Would you like to get your geographic location coordinates?");
+
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                // User has requested location coordinates
+                Log.d("Location", "Yes");
+                Toast toast = Toast.makeText(getApplicationContext(), "Get Location.", Toast.LENGTH_SHORT);
+
+                // get loacation
+                Intent intent = new Intent(MainActivity.this, GetLocationActivity.class);
+                startActivity(intent);
+                //finish();    // comment out to stay within the application
+
+                dialog.dismiss();
+            }
+        });
+
+        // show the dialog here
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d("Location", "No");
+                Toast toast = Toast.makeText(getApplicationContext(), "Do Nothing.", Toast.LENGTH_SHORT);
+                // Do nothing
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+
     }
 }
