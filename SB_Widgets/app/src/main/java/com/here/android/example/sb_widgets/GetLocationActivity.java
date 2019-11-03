@@ -34,10 +34,12 @@ public class GetLocationActivity extends AppCompatActivity
     private TextView promptView;
     private TextView latView;
     private TextView lonView;
+    private TextView infoView;
 
     private static int PROMPT_ID = View.generateViewId();
     private static int LAT_ID = View.generateViewId();
     private static int LON_ID = View.generateViewId();
+    private static int INFO_ID = View.generateViewId();
 
     String[] perms  = {Manifest.permission.ACCESS_FINE_LOCATION};
 
@@ -59,8 +61,8 @@ public class GetLocationActivity extends AppCompatActivity
             PermissionsChecker.checkPermissions(perms[i], i);
         }
 
-        // prime location value with the Best Last Know Location
-        Location lastKnowLocation = getBestLastKnownLocation(this);
+        /*// prime location value with the Best Last Know Location
+        Location lastKnowLocation = getBestLastKnownLocation(this);*/
     }
 
     // ########################################################################
@@ -88,16 +90,19 @@ public class GetLocationActivity extends AppCompatActivity
     private void enableLocation()  {
 
         // Acquire a reference to the system Location Manager
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         // Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
+        final LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
                 useLocation(location);
             }
 
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                // stop the location updates
+                locationManager.removeUpdates(this);
+            }
 
             public void onProviderEnabled(String provider) {}
 
@@ -141,25 +146,31 @@ public class GetLocationActivity extends AppCompatActivity
         TextView lonView = new TextView(mContext);
         lonView.setTextSize (TypedValue. COMPLEX_UNIT_SP, size);
         lonView.setText(String.valueOf(lon));
+        TextView infoView = new TextView(mContext);
+        infoView.setTextSize (TypedValue. COMPLEX_UNIT_SP, size);
+        infoView.setText("Select Device Back Button to Return to Main App");
 
         // set ID's
         promptView.setId(PROMPT_ID);
         latView.setId(LAT_ID);
         lonView.setId(LON_ID);
+        infoView.setId(INFO_ID);
 
         linearLayout.addView(promptView);
         linearLayout.addView(latView);
         linearLayout.addView(lonView);
+        linearLayout.addView(infoView);
 
         contentView = (ViewGroup) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
         contentView.addView(linearLayout);
 
+        /*// don't need this any longer
         Context context = getApplicationContext();
         CharSequence text = "You moved here: " + location.toString();
         int duration = Toast.LENGTH_SHORT;
 
         Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
+        toast.show();*/
     }
 }
 
