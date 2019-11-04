@@ -1,5 +1,6 @@
 package com.here.android.example.sb_widgets;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
@@ -60,33 +61,8 @@ public class GetLocationActivity extends AppCompatActivity
         for(int i=0; i<perms.length; i++) {
             PermissionsChecker.checkPermissions(perms[i], i);
         }
-
-        /*// prime location value with the Best Last Know Location
-        Location lastKnowLocation = getBestLastKnownLocation(this);*/
     }
-
-    // ########################################################################
-    // Example 3: taken from https://www.programcreek.com/java-api-examples/?class=android.location.Location&method=getAccuracy
-    // ########################################################################
-    public static Location getBestLastKnownLocation(Context context) {
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        List<String> providers = locationManager.getAllProviders();
-        Location bestLocation = null;
-
-        for (String provider : providers) {
-            try {
-                Location location = locationManager.getLastKnownLocation(provider);
-                if (bestLocation == null || location != null
-                        && location.getElapsedRealtimeNanos() > bestLocation.getElapsedRealtimeNanos()
-                        && location.getAccuracy() > bestLocation.getAccuracy())
-                    bestLocation = location;
-            } catch (SecurityException ignored) {
-            }
-        }
-
-        return bestLocation;
-    }
-
+    
     private void enableLocation()  {
 
         // Acquire a reference to the system Location Manager
@@ -164,13 +140,12 @@ public class GetLocationActivity extends AppCompatActivity
         contentView = (ViewGroup) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
         contentView.addView(linearLayout);
 
-        /*// don't need this any longer
-        Context context = getApplicationContext();
-        CharSequence text = "You moved here: " + location.toString();
-        int duration = Toast.LENGTH_SHORT;
+    }
 
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();*/
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String [] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionsChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
 

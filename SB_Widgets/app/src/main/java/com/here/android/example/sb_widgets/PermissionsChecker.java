@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-public class PermissionsChecker extends AppCompatActivity {
+public class PermissionsChecker {
 
     public interface PermissionListener {
         public Context getApplicationContext();
@@ -61,8 +61,8 @@ public class PermissionsChecker extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
+
+    public static void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
         //switch (requestCode) {
         //case 0: {
